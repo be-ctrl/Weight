@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حاسبة الوزن المثالي الاحترافية</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/flowbite.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap');
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #f6f8ff 0%, #f0f4ff 100%);
+        }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .custom-shadow {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+        .progress-ring {
+            transform: rotate(-90deg);
+        }
+        input[type="range"] {
+            -webkit-appearance: none;
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 3px;
+            outline: none;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #6366f1;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body class="min-h-screen py-8">
+    <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto">
+            <!-- رأس الصفحة -->
+            <div class="text-center mb-8 glass-effect rounded-2xl p-8 custom-shadow">
+                <h1 class="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 mb-3">
+                    حاسبة الوزن المثالي الاحترافية
+                </h1>
+                <p class="text-gray-600 text-lg">تحليل شامل للصحة الجسدية مع توصيات مخصصة</p>
+            </div>
+
+            <!-- نموذج الإدخال -->
+            <div class="glass-effect rounded-2xl p-8 mb-8 custom-shadow">
+                <form id="health-form" class="space-y-8">
+                    <!-- البيانات الأساسية -->
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-gray-700">العمر</label>
+                            <div class="relative">
+                                <input type="number" id="age" min="1" max="120" required
+                                    class="block w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all bg-white/50"
+                                    placeholder="أدخل عمرك">
+                                <span class="absolute left-3 top-3 text-gray-400">سنة</span>
+                            </div>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-gray-700">الطول</label>
+                            <div class="relative">
+                                <input type="number" id="height" min="50" max="250" required
+                                    class="block w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all bg-white/50"
+                                    placeholder="أدخل طولك">
+                                <span class="absolute left-3 top-3 text-gray-400">سم</span>
+                            </div>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-gray-700">الوزن الحالي</label>
+                            <div class="relative">
+                                <input type="number" id="current-weight" min="20" max="300" required
+                                    class="block w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all bg-white/50"
+                                    placeholder="أدخل وزنك الحالي">
+                                <span class="absolute left-3 top-3 text-gray-400">كجم</span>
+                            </div>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-gray-700">محيط الخصر (اختياري)</label>
+                            <div class="relative">
+                                <input type="number" id="waist" min="40" max="200"
+                                    class="block w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all bg-white/50"
+                                    placeholder="أدخل محيط خصرك">
+                                <span class="absolute left-3 top-3 text-gray-400">سم</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- معلومات إضافية -->
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-gray-700">الجنس</label>
+                            <select id="gender" required
+                                class="block w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all bg-white/50">
+                                <option value="male">ذكر</option>
+                                <option value="female">أنثى</option>
+                            </select>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-gray-700">بنية الجسم</label>
+                            <select id="body-frame" required
+                                class="block w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all bg-white/50">
+                                <option value="small">نحيف</option>
+                                <option value="medium" selected>متوسط</option>
+                                <option value="large">عريض</option>
+                            </select>
+                        </div>
+
+                        <div class="space-y-2 md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700">مستوى النشاط البدني</label>
+                            <input type="range" id="activity-level" min="1.2" max="1.9" step="0.1" value="1.55"
+                                class="w-full">
+                            <div class="flex justify-between text-sm text-gray-600 mt-1">
+                                <span>خامل</span>
+                                <span>خفيف</span>
+                                <span>متوسط</span>
+                                <span>نشط</span>
+                                <span>نشط جداً</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- الأهداف -->
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-700">الهدف</label>
+                        <div class="grid grid-cols-3 gap-4">
+                            <button type="button" data-goal="lose" 
+                                class="goal-btn p-3 rounded-lg border border-gray-300 hover:border-indigo-500 transition-all focus:outline-none">
+                                إنقاص الوزن
+                            </button>
+                            <button type="button" data-goal="maintain" 
+                                class="goal-btn p-3 rounded-lg border border-gray-300 hover:border-indigo-500 transition-all focus:outline-none">
+                                المحافظة على الوزن
+                            </button>
+                            <button type="button" data-goal="gain" 
+                                class="goal-btn p-3 rounded-lg border border-gray-300 hover:border-indigo-500 transition-all focus:outline-none">
+                                زيادة الوزن
+                            </button>
+                        </div>
+                        <input type="hidden" id="selected-goal" value="maintain" required>
+                    </div>
+
+                    <!-- زر الحساب -->
+                    <button type="submit"
+                        class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold py-4 px-6 rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 shadow-lg">
+                        تحليل وحساب النتائج
+                    </button>
+                </form>
+            </div>
+
+            <!-- النتائج -->
+            <div id="results" class="hidden space-y-8">
+                <!-- المؤشرات الرئيسية -->
+                <div class="glass-effect rounded-2xl p-8 custom-shadow">
+                    <h2 class="text-2xl font-bold mb-6 text-gray-800">المؤشرات الرئيسية</h2>
+                    <div class="grid md:grid-cols-3 gap-6">
+                        <!-- الوزن المثالي -->
+                        <div class="relative">
+                            <div class="text-center">
+                                <svg class="progress-ring mx-auto" width="120" height="120">
+                                    <circle class="progress-ring-circle-bg" stroke="#e2e8f0" stroke-width="8" fill="transparent" r="52" cx="60" cy="60"/>
+                                    <circle id="weight-progress" class="progress-ring-circle" stroke="#6366f1" stroke-width="8" fill="transparent" r="52" cx="60" cy="60"
+                                        stroke-dasharray="326.7256359733385"
+                                        stroke-dashoffset="326.7256359733385"/>
+                                </svg>
+                                <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                                    <div id="ideal-weight" class="text-2xl font-bold text-indigo-600"></div>
+                                    <div class="text-sm text-gray-500">الوزن المثالي</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- مؤشر كتلة الجسم -->
+                        <div class="relative">
+                            <div class="text-center">
+                                <svg class="progress-ring mx-auto" width="120" height="120">
+                                    <circle class="progress-ring-circle-bg" stroke="#e2e8f0" stroke-width="8" fill="transparent" r="52" cx="60" cy="60"/>
+                                    <circle id="bmi-progress" class="progress-ring-circle" stroke="#6366f1" stroke-width="8" fill="transparent" r="52" cx="60" cy="60"
+                                        stroke-dasharray="326.7256359733385"
+                                        stroke-dashoffset="326.7256359733385"/>
+                                </svg>
+                                <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                                    <div id="bmi" class="text-2xl font-bold text-indigo-600"></div>
+                                    <div class="text-sm text-gray-500">مؤشر كتلة الجسم</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- نسبة الدهون -->
+                        <div class="relative">
+                            <div class="text-center">
+                                <svg class="progress-ring mx-auto" width="120" height="120">
+                                    <circle class="progress-ring-circle-bg" stroke="#e2e8f0" stroke-width="8" fill="transparent" r="52" cx="60" cy="60"/>
+                                    <circle id="fat-progress" class="progress-ring-circle" stroke="#6366f1" stroke-width="8" fill="transparent" r="52" cx="60" cy="60"
+                                        stroke-dasharray="326.7256359733385"
+                                        stroke-dashoffset="326.7256359733385"/>
+                                </svg>
+                                <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                                    <div id="body-fat" class="text-2xl font-bold text-indigo-600"></div>
+                                    <div class="text-sm text-gray-500">نسبة الدهون</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- التحليل التفصيلي -->
+                <div class="grid md:grid-cols-2 gap-8">
+                    <!-- معلومات التغذية -->
+                    <div class="glass-effect rounded-2xl p-8 custom-shadow">
+                        <h2 class="text-2xl font-bold mb-6 text-gray-800">معلومات التغذية</h2>
+                        <div class="space-y-6">
+                            <div>
+                                <h3 class="font-semibold text-gray-700 mb-2">السعرات الحرارية اليومية</h3>
+                                <div id="calories-chart" class="h-64"></div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="p-4 bg-indigo-50 rounded-lg">
+                                    <div class="text-sm text-indigo-600 mb-1">الحد الأدنى</div>
+                                    <div id="min-calories" class="text-xl font-bold text-indigo-800"></div>
+                                </div>
+                                <div class="p-4 bg-purple-50 rounded-lg">
+                                    <div class="text-sm text-purple-600 mb-1">الحد الأقصى</div>
+                                    <div id="max-calories" class="text-xl font-bold text-purple-800"></div>
+                                </div>
+                            </div>
+                            <div class="space-y-2">
+                                <h3 class="font-semibold text-gray-700">توزيع العناصر الغذائية المقترح:</h3>
+                                <div id="macros" class="grid grid-cols-3 gap-4">
+                                    <!-- سيتم ملؤها بواسطة JavaScript -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- القياسات والمؤشرات -->
+                    <div class="glass-effect rounded-2xl p-8 custom-shadow">
+                        <h2 class="text-2xl font-bold mb-6 text-gray-800">القياسات والمؤشرات</h2>
+                        <div class="space-y-6">
+                            <div>
+                                <h3 class="font-semibold text-gray-700 mb-4">النطاق الصحي للوزن</h3>
+                                <div id="weight-range-chart" class="h-32"></div>
+                            </div>
+                            <div class="grid gap-4">
+                                <div class="p-4 bg-green-50 rounded-lg">
+                                    <div class="text-sm text-green-600 mb-1">معدل الأيض الأساسي (BMR)</div>
+                                    <div id="bmr" class="text-xl font-bold text-green-800"></div>
+                                </div>
+                                <div id="waist-analysis" class="p-4 bg-blue-50 rounded-lg hidden">
+                                    <div class="text-sm text-blue-600 mb-1">تحليل محيط الخصر</div>
+                                    <div id="waist-status" class="text-xl font-bold text-blue-800"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- خطة العمل والتوصيات -->
+                <div class="glass-effect rounded-2xl p-8 custom-shadow">
+                    <h2 class="text-2xl font-bold mb-6 text-gray-800">خطة العمل والتوصيات</h2>
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <div>
+                            <h3 class="font-semibold text-gray-700 mb-4">الأهداف المقترحة</h3>
+                            <div id="goals" class="space-y-4">
+                                <!-- سيتم ملؤها بواسطة JavaScript -->
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-gray-700 mb-4">نصائح مخصصة</h3>
+                            <div id="recommendations" class="space-y-3">
+                                <!-- سيتم ملؤها بواسطة JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // تهيئة المتغيرات العامة
+        let selectedGoal = 'maintain';
+        
+        // إعداد أزرار الأهداف
+        document.querySelectorAll('.goal-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.goal-btn').forEach(b => 
+                    b.classList.remove('bg-indigo-100', 'border-indigo-500', 'text-indigo-700'));
+                btn.classList.add('bg-indigo-100', 'border-indigo-500', 'text-indigo-700');
+                selectedGoal = btn.dataset.goal;
+                document.getElementById('selected-goal').value = selectedGoal;
+            });
+        });
+
+        // دالة لتحديث الرسم البياني الدائري
+        function updateCircleProgress(elementId, percentage) {
+            const circle = document.getElementById(elementId);
+            const radius = circle.r.baseVal.value;
+            const circumference = radius * 2 * Math.PI;
+            const offset = circumference - (percentage / 100) * circumference;
+            circle.style.strokeDasharray = `${circumference} ${circumference}`;
+            circle.style.strokeDashoffset = offset;
+        }
+
+        // دالة لحساب نسبة الدهون في الجسم
+        function calculateBodyFat(gender, bmi, age) {
+            // معادلة Deurenberg لحساب نسبة الدهون
+            return (1.20 * bmi) + (0.23 * age) - (10.8 * (gender === 'male' ? 1 : 0)) - 5.4;
+        }
+
+        // دالة لإنشاء رسم بياني للسعرات الحرارية
+        function createCaloriesChart(bmr, tdee) {
+            const ctx = document.createElement('canvas');
+            document.getElementById('calories-chart').innerHTML = '';
+            document.getElementById('calories-chart').appendChild(ctx);
+
+            const data = {
+                labels: ['BMR', 'TDEE'],
+                datasets: [{
+                    data: [bmr, tdee],
+                    backgroundColor: ['#818cf8', '#a78bfa'],
+                    borderColor: ['#6366f1', '#7c3aed'],
+                    borderWidth: 1
+                }]
+            };
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: data,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        // دالة لإنشاء رسم بياني لنطاق الوزن
+        function createWeightRangeChart(currentWeight, idealWeight, minWeight, maxWeight) {
+            const ctx = document.createElement('canvas');
+            document.getElementById('weight-range-chart').innerHTML = '';
+            document.getElementById('weight-range-chart').appendChild(ctx);
+
+            const data = {
+                labels: ['الوزن الحالي', 'الوزن المثالي', 'الحد الأدنى', 'الحد الأقصى'],
+                datasets: [{
+                    data: [currentWeight, idealWeight, minWeight, maxWeight],
+                    backgroundColor: ['#fca5a5', '#818cf8', '#86efac', '#fcd34d'],
+                    borderColor: ['#ef4444', '#6366f1', '#22c55e', '#f59e0b'],
+                    borderWidth: 1
+                }]
+            };
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: data,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+
+        // معالجة تقديم النموذج
+        document.getElementById('health-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // قراءة البيانات المدخلة
+            const age = parseInt(document.getElementById('age').value);
+            const height = parseInt(document.getElementById('height').value);
+            const currentWeight = parseFloat(document.getElementById('current-weight').value);
+            const gender = document.getElementById('gender').value;
+            const activityLevel = parseFloat(document.getElementById('activity-level').value);
+            const bodyFrame = document.getElementById('body-frame').value;
+            const waist = document.getElementById('waist').value ? parseInt(document.getElementById('waist').value) : null;
+
+            // حساب مؤشر كتلة الجسم
+            const heightInMeters = height / 100;
+            const bmi = currentWeight / (heightInMeters * heightInMeters);
+
+            // حساب الوزن المثالي باستخدام عدة معادلات
+            // معادلة Hamwi المحسنة
+            const hamwiWeight = gender === 'male' 
+                ? 48 + 2.7 * (height - 152.4) / 2.54
+                : 45.5 + 2.2 * (height - 152.4) / 2.54;
+
+            // معادلة Devine
+            const devineWeight = gender === 'male'
+                ? 50 + 2.3 * (height - 152.4) / 2.54
+                : 45.5 + 2.3 * (height - 152.4) / 2.54;
+
+            // معادلة Robinson
+            const robinsonWeight = gender === 'male'
+                ? 52 + 1.9 * (height - 152.4) / 2.54
+                : 49 + 1.7 * (height - 152.4) / 2.54;
+
+            // تعديل حسب بنية الجسم
+            let frameAdjustment = 1;
+            if (bodyFrame === 'small') frameAdjustment = 0.95;
+            if (bodyFrame === 'large') frameAdjustment = 1.05;
+
+            // حساب المتوسط المرجح
+            const idealWeight = ((hamwiWeight + devineWeight + robinsonWeight) / 3) * frameAdjustment;
+
+            // حساب معدل الأيض الأساسي (BMR) باستخدام معادلة Mifflin-St Jeor
+            const bmr = gender === 'male'
+                ? (10 * idealWeight) + (6.25 * height) - (5 * age) + 5
+                : (10 * idealWeight) + (6.25 * height) - (5 * age) - 161;
+
+            // حساب إجمالي السعرات الحرارية اليومية (TDEE)
+            const tdee = Math.round(bmr * activityLevel);
+
+            // حساب نسبة الدهون
+            const bodyFat = calculateBodyFat(gender, bmi, age);
+
+            // تحديث المؤشرات الدائرية
+            updateCircleProgress('weight-progress', 
+                Math.min(100, Math.max(0, (currentWeight / idealWeight) * 100)));
+            updateCircleProgress('bmi-progress', 
+                Math.min(100, Math.max(0, (bmi / 25) * 100)));
+            updateCircleProgress('fat-progress', 
+                Math.min(100, Math.max(0, (bodyFat / (gender === 'male' ? 25 : 32)) * 100)));
+
+            // تحديث النصوص
+            document.getElementById('ideal-weight').textContent = `${idealWeight.toFixed(1)} كجم`;
+            document.getElementById('bmi').textContent = bmi.toFixed(1);
+            document.getElementById('body-fat').textContent = `${bodyFat.toFixed(1)}%`;
+            document.getElementById('bmr').textContent = `${Math.round(bmr)} سعرة`;
+
+            // حساب وعرض نطاق السعرات الحرارية
+            const minCalories = Math.round(tdee * 0.85);
+            const maxCalories = Math.round(tdee * 1.15);
+            document.getElementById('min-calories').textContent = `${minCalories} سعرة`;
+            document.getElementById('max-calories').textContent = `${maxCalories} سعرة`;
+
+            // إنشاء الرسوم البيانية
+            createCaloriesChart(bmr, tdee);
+            createWeightRangeChart(
+                currentWeight,
+                idealWeight,
+                idealWeight * 0.9,
+                idealWeight * 1.1
+            );
+
+            // تحليل محيط الخصر
+            if (waist) {
+                const waistAnalysis = document.getElementById('waist-analysis');
+                const waistStatus = document.getElementById('waist-status');
+                waistAnalysis.classList.remove('hidden');
+                
+                let waistRisk;
+                if (gender === 'male') {
+                    if (waist < 94) waistRisk = 'طبيعي';
+                    else if (waist < 102) waistRisk = 'خطر متوسط';
+                    else waistRisk = 'خطر مرتفع';
+                } else {
+                    if (waist < 80) waistRisk = 'طبيعي';
+                    else if (waist < 88) waistRisk = 'خطر متوسط';
+                    else waistRisk = 'خطر مرتفع';
+                }
+                waistStatus.textContent = waistRisk;
+            }
+
+            // تحديث توزيع العناصر الغذائية
+            const macrosContainer = document.getElementById('macros');
+            macrosContainer.innerHTML = `
+                <div class="p-3 bg-green-50 rounded-lg text-center">
+                    <div class="text-sm text-green-600 mb-1">بروتين</div>
+                    <div class="font-bold text-green-800">${Math.round(idealWeight * 2)}g</div>
+                </div>
+                <div class="p-3 bg-blue-50 rounded-lg text-center">
+                    <div class="text-sm text-blue-600 mb-1">كربوهيدرات</div>
+                    <div class="font-bold text-blue-800">${Math.round((tdee * 0.45) / 4)}g</div>
+                </div>
+                <div class="p-3 bg-yellow-50 rounded-lg text-center">
+                    <div class="text-sm text-yellow-600 mb-1">دهون صحية</div>
+                    <div class="font-bold text-yellow-800">${Math.round((tdee * 0.25) / 9)}g</div>
+                </div>
+            `;
+
+            // تحديث الأهداف والتوصيات
+            const goalsContainer = document.getElementById('goals');
+            const recommendationsContainer = document.getElementById('recommendations');
+            
+            // تحديد الأهداف حسب المؤشرات
+            const goals = [];
+            const recommendations = [];
+
+            // تحليل BMI
+            let bmiCategory;
+            let bmiRecommendations = [];
+            if (bmi < 18.5) {
+                bmiCategory = 'نقص في الوزن';
+                goals.push({
+                    text: 'زيادة الوزن بشكل صحي',
+                    details: `زيادة ${Math.round((idealWeight - currentWeight) * 10) / 10} كجم للوصول للوزن المثالي`
+                });
+                bmiRecommendations.push('زيادة السعرات الحرارية اليومية بمقدار 300-500 سعرة');
+                bmiRecommendations.push('التركيز على الأطعمة الغنية بالبروتين والدهون الصحية');
+            } else if (bmi < 25) {
+                bmiCategory = 'وزن صحي';
+                goals.push({
+                    text: 'الحفاظ على الوزن الحالي',
+                    details: 'المحافظة على نمط الحياة الصحي'
+                });
+            } else if (bmi < 30) {
+                bmiCategory = 'زيادة في الوزن';
+                goals.push({
+                    text: 'إنقاص الوزن تدريجياً',
+                    details: `إنقاص ${Math.round((currentWeight - idealWeight) * 10) / 10} كجم للوصول للوزن المثالي`
+                });
+                bmiRecommendations.push('تقليل السعرات الحرارية اليومية بمقدار 500-750 سعرة');
+            } else {
+                bmiCategory = 'سمنة';
+                goals.push({
+                    text: 'إنقاص الوزن بإشراف طبي',
+                    details: `تحتاج لإنقاص ${Math.round((currentWeight - idealWeight) * 10) / 10} كجم`
+                });
+                bmiRecommendations.push('استشارة أخصائي تغذية لوضع خطة غذائية مناسبة');
+                bmiRecommendations.push('البدء ببرنامج نشاط بدني تدريجي');
+            }
+
+            // تحليل نسبة الدهون
+            if (bodyFat > (gender === 'male' ? 25 : 32)) {
+                goals.push({
+                    text: 'تقليل نسبة الدهون',
+                    details: 'زيادة كتلة العضلات وتقليل الدهون'
+                });
+                recommendations.push('دمج تمارين القوة مع التمارين الهوائية');
+                recommendations.push('زيادة تناول البروتين مع تقليل السكريات المكررة');
+            }
+
+            // تحليل محيط الخصر
+            if (waist) {
+                const waistRatio = waist / height;
+                if (waistRatio > 0.5) {
+                    goals.push({
+                        text: 'تقليل دهون البطن',
+                        details: 'تقليل محيط الخصر للحد من المخاطر الصحية'
+                    });
+                    recommendations.push('التركيز على تمارين تقوية عضلات البطن');
+                    recommendations.push('تجنب الأطعمة الغنية بالسكريات المضافة والدهون المتحولة');
+                }
+            }
+
+            // إضافة توصيات حسب مستوى النشاط
+            if (activityLevel < 1.4) {
+                recommendations.push('زيادة النشاط البدني تدريجياً، بدءاً من المشي 30 دقيقة يومياً');
+                recommendations.push('محاولة تقليل وقت الجلوس وزيادة الحركة خلال اليوم');
+            }
+
+            // عرض الأهداف
+            goalsContainer.innerHTML = goals.map(goal => `
+                <div class="p-4 bg-indigo-50 rounded-lg">
+                    <div class="font-semibold text-indigo-700 mb-1">${goal.text}</div>
+                    <div class="text-sm text-indigo-600">${goal.details}</div>
+                </div>
+            `).join('');
+
+            // عرض التوصيات
+            const allRecommendations = [...bmiRecommendations, ...recommendations];
+            recommendationsContainer.innerHTML = allRecommendations.map(rec => `
+                <div class="flex items-start space-x-2 rtl:space-x-reverse">
+                    <div class="w-2 h-2 mt-2 rounded-full bg-indigo-500"></div>
+                    <div class="flex-1 text-gray-700">${rec}</div>
+                </div>
+            `).join('');
+
+            // إظهار قسم النتائج
+            document.getElementById('results').classList.remove('hidden');
+            
+            // التمرير إلى النتائج بشكل سلس
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    </script>
+</body>
+</html>
